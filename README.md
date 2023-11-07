@@ -25,10 +25,12 @@ Before you begin, ensure you have the following installed:
 1. Clone the repository:
    ```sh
    git clone https://github.com/your-username/Fahrenheit.git
+   ```
 
 2. Navigate to the project directory:
    ```sh
    cd Fahrenheit
+   ```
 3. Install the dependencies:
    ```sh
    npm install
@@ -40,9 +42,41 @@ Create a .env file in the root of your project and add the following environment
    TELEGRAM_API_HASH=your_api_hash
    OPENAI_API_KEY=your_openai_api_key
 
+   ```
 ### Usage
 To start the application, run:
    ```sh
    npm start
+```
 
+## Development
+
+Want to contribute? Great! Here's how you can run the project for development:
+
+1. Make sure all the prerequisites are installed.
+2. Follow the installation steps.
+3. Make your changes.
+4. Test your changes.
+5. Create a pull request.
+
+## Roadmap
+
+- [ ] Fetch news from multiple Telegram channels.
+- [ ] Implement a more sophisticated scoring algorithm.
+- [ ] Add support for real-time news analysis.
+
+## Contributing
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+
+## Acknowledgments
+
+- GramJS for providing the Telegram client library.
+- OpenAI for the powerful API enabling AI-driven analysis.
+
+We hope Fahrenheit will become a valuable tool in understanding the news narrative and its underlying impact on society.
 
