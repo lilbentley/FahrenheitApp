@@ -67,7 +67,7 @@ Want to contribute? Great! Here's how you can run the project for development:
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+Closed for now
 
 ## License
 
