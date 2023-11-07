@@ -29,3 +29,20 @@ Before you begin, ensure you have the following installed:
 2. Navigate to the project directory:
    ```sh
    cd Fahrenheit
+3. Install the dependencies:
+   ```sh
+   npm install
+
+### Configuration
+Create a .env file in the root of your project and add the following environment variables:
+   ```env
+   TELEGRAM_API_ID=your_api_id
+   TELEGRAM_API_HASH=your_api_hash
+   OPENAI_API_KEY=your_openai_api_key
+
+### Usage
+To start the application, run:
+   ```sh
+   npm start
+
+
