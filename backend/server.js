@@ -1,15 +1,43 @@
 require('dotenv').config();
 const { TelegramClient } = require("telegram");
 const { StringSession } = require("telegram/sessions");
-const input = require("input"); 
-const { OpenAI } = require('openai'); 
+const input = require("input");
+const { OpenAI } = require('openai');
 const express = require('express');
 
 // Configuration from environment variables
-const apiId = parseInt(process.env.API_ID, 10); 
-const apiHash = process.env.API_HASH; 
+const apiId = parseInt(process.env.API_ID, 10);
+const apiHash = process.env.API_HASH;
 const stringSession = new StringSession(process.env.STRING_SESSION);
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const AIprompt = "As an AI with a conservative stance on global stability ratings, you are to provide STRICTLY only a numerical assessment from 1 to 5 based on the following messages, where 1 represents a completely stable and peaceful global situation, and 5 represents extreme instability and crisis. Ratings of 3 or 4 or  5 are reserved for only the most dire of circumstances, where the events described have profound and widespread negative consequences. Please apply a stringent threshold for these ratings and consider the overall context and historical global stability standards. Provide only the numerical score as your response, and disregard any promotional content. Here are the messages:";
+// Global filter words
+const globalFilterWords = ['globalWord1', 'globalWord2']; // Add global filter words here
+
+// Channel configurations
+const channels = [
+  {
+    name: 'oldlentach',
+    limit: 5,
+    filterWords: ['#реклама', 'news.lenta.ch'],
+    removeWords: ['removeThisWord'], // Specific filter words for this channel
+  },
+
+  {
+    name: 'nexta_live',
+    limit: 5,
+    filterWords: ['#реклама'],
+    removeWords: ['@nexta_live'], // Specific filter words for this channel
+  },
+  
+  {
+    name: 'varlamov_news',
+    limit: 5,
+    filterWords: ['#реклама'],
+    removeWords: ['removeThisWord'], // Specific filter words for this channel
+  },
+  // Add more channel configurations here
+];
 
 // Initialize Telegram client
 const client = new TelegramClient(stringSession, apiId, apiHash, { connectionRetries: 5 });
@@ -28,12 +56,13 @@ async function evaluateMessagesWithAI(prompt) {
     const chatCompletion = await openai.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
       model: 'gpt-3.5-turbo',
+      seed: 1337,
     });
     const messageContent = chatCompletion.choices[0].message.content;
-    return messageContent; 
+    return messageContent;
   } catch (error) {
     console.error('Error calling the OpenAI API:', error);
-    throw error; 
+    throw error;
   }
 }
 
@@ -54,18 +83,60 @@ async function startTelegramClient() {
 
 // Start the Telegram client
 startTelegramClient();
+function removeWordsFromMessage(message, removeWords) {
+  let modifiedMessage = message;
+  removeWords.forEach(word => {
+    // Replace the word with an empty string
+    const regex = new RegExp(word, 'gi'); // 'gi' for case-insensitive and global match
+    modifiedMessage = modifiedMessage.replace(regex, '');
+  });
+  return modifiedMessage.trim(); // Trim the message after replacements
+}
+// Function to fetch and filter messages from a channel
+async function fetchAndFilterMessages(channelConfig) {
+  const channel = await client.getEntity(channelConfig.name);
+  const messages = await client.getMessages(channel, { limit: channelConfig.limit });
+  const combinedFilterWords = [...globalFilterWords, ...channelConfig.filterWords];
+
+  return messages
+    .filter(m => m.message && m.message.trim() !== '')
+    .map(m => {
+      // Remove specified words from each message
+      const messageWithoutRemovedWords = removeWordsFromMessage(m.message, channelConfig.removeWords);
+      // Further filter out any messages that contain the combined filter words
+      return combinedFilterWords.some(word => messageWithoutRemovedWords.includes(word)) ? '' : messageWithoutRemovedWords;
+    })
+    .filter(m => m !== ''); // Filter out any messages that became empty after word removal
+}
 
 // Endpoint to get the evaluated number from messages
 app.get('/api/count', async (req, res) => {
   try {
-    const channel = await client.getEntity('nexta_live');
-    const messages = await client.getMessages(channel, { limit: 10 });
-    const messagesText = messages.map(m => m.message).join('\n');
-    const prompt = `Please provide a numerical assessment of global stability based on the following messages. Assign a score from 1 to 5, where 1 indicates a stable and peaceful global situation (GOOD), and 5 indicates a highly unstable and critical global situation (WORST). Use the score of 4-5 only for situations with severe negative implications or events. Consider the collective impact of these messages on the current state of global affairs. Provide only the numerical score as your response. Here are the messages: ${messagesText} `; // Your existing prompt
+    let allTextMessages = [];
 
+    // Fetch and filter messages from each channel
+    for (const channelConfig of channels) {
+      const textMessages = await fetchAndFilterMessages(channelConfig);
+      allTextMessages = allTextMessages.concat(textMessages);
+    }
+
+    // Output the text of all messages to the terminal
+    console.log("Filtered Messages Text:", allTextMessages.join('\n'));
+
+    // Check if there are enough messages to evaluate
+    if (allTextMessages.length === 0) {
+      return res.status(400).json({ error: 'No suitable text messages available for evaluation.' });
+    }
+
+    // Create a prompt for the AI with the filtered messages
+    const prompt = `${AIprompt}  ${allTextMessages.join('\n')} `;
+
+    // Evaluate messages with AI
     const evaluatedNumber = await evaluateMessagesWithAI(prompt);
     res.json({ count: parseInt(evaluatedNumber, 10) });
+    console.log("Fahrenheit Temperature:"+ evaluatedNumber);
   } catch (error) {
+    console.error('Error:', error);
     res.status(500).json({ error: 'An error occurred while processing your request.' });
   }
 });
