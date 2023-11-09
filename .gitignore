@@ -66,3 +66,66 @@ yarn-error.log
 
 # testing
 /coverage
+
+
+# Dependency directories
+node_modules/
+bower_components/
+
+# Build output directories
+ios/build/
+android/build/
+android/app/build/
+
+# Debug log from npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Keystores
+*.jks
+*.keystore
+
+# Xcode
+*.xcuserstate
+xcuserdata/
+DerivedData/
+*.xcworkspace
+!default.xcworkspace
+
+# Android local configuration file
+local.properties
+
+# Android Studio
+.idea/
+.gradle/
+*.iml
+
+# macOS files
+.DS_Store
+
+# React Native debug files
+*.hprof
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Detox
+detox_artifacts/
+
+# Others
+*.log
+*.tmp
+*.temp
+*.swp
+*~
