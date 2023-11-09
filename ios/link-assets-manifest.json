@@ -1,0 +1,13 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/BonaNova-Regular.otf",
+      "sha1": "c738c6b142b6784bc76d60d0eced8a0fb9b7bf0a"
+    },
+    {
+      "path": "assets/fonts/fanwood.otf",
+      "sha1": "fe10e2de15746534eee7d174902be51d862b2f70"
+    }
+  ]
+}
