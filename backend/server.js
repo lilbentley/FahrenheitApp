@@ -26,7 +26,7 @@ const channels = [
   {
     name: 'nexta_live',
     limit: 5,
-    filterWords: ['#реклама'],
+    filterWords: ['#реклама', 'youtu.be'],
     removeWords: ['@nexta_live'], // Specific filter words for this channel
   },
   
@@ -53,12 +53,21 @@ app.use(express.json());
 // Function to evaluate messages with OpenAI
 async function evaluateMessagesWithAI(prompt) {
   try {
-    const chatCompletion = await openai.chat.completions.create({
-      messages: [{ role: 'user', content: prompt }],
-      model: 'gpt-3.5-turbo',
+
+    // const chatCompletion = await openai.chat.completions.create({
+    //   messages: [{ role: 'user', content: prompt }],
+    //   model: 'gpt-3.5-turbo',
+    //   seed: 1337,
+    // });
+
+    const chatCompletion = await openai.completions.create({
+      prompt: prompt,
+      model: 'gpt-3.5-turbo-instruct',
       seed: 1337,
     });
-    const messageContent = chatCompletion.choices[0].message.content;
+
+
+    const messageContent = chatCompletion.choices[0].text;
     return messageContent;
   } catch (error) {
     console.error('Error calling the OpenAI API:', error);

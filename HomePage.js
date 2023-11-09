@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Image, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 // Custom hook for rotation animation
 const useRotateAnimation = () => {
@@ -65,26 +66,36 @@ const HomePage = () => {
   ));
 
   return (
-    <View style={styles.container}>
-      <View style={styles.fireContainer}>{fireSpots}</View>
-      {isLoading ? (
-        <Animated.Image
-          source={require('./assets/refresh.png')}
-          style={[styles.buttonImage, { transform: [{ rotate: rotation }] }]}
-        />
-      ) : (
-        <TouchableOpacity onPress={fetchLitFiresCount}>
-          <Image
+    <LinearGradient
+      colors={['#c88787', '#7ab0bc']} // Use your own gradient colors
+      style={styles.linearGradient}
+    >
+      <View style={styles.container}>
+        <View style={styles.fireContainer}>{fireSpots}</View>
+        {isLoading ? (
+          <Animated.Image
             source={require('./assets/refresh.png')}
-            style={styles.buttonImage}
+            style={[styles.buttonImage, { transform: [{ rotate: rotation }] }]}
           />
-        </TouchableOpacity>
-      )}
-    </View>
+        ) : (
+          <TouchableOpacity onPress={fetchLitFiresCount}>
+            <Image
+              source={require('./assets/refresh.png')}
+              style={styles.buttonImage}
+            />
+          </TouchableOpacity>
+        )}
+      </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
+
+  linearGradient: {
+    flex: 1,
+  },
+  
   container: {
     flex: 1,
     justifyContent: 'center',
