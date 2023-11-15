@@ -116,6 +116,8 @@ async function fetchAndFilterMessages(channelConfig) {
   return messages
     .filter(m => m.message && m.message.trim() !== '')
     .map(m => {
+
+      console.log(`Message ID: ${m.id}`);
       // Remove specified words from each message
       const messageWithoutRemovedWords = removeWordsFromMessage(m.message, channelConfig.removeWords);
       // Further filter out any messages that contain the combined filter words
@@ -132,7 +134,7 @@ async function fetchAndFilterMessages(channelConfig) {
 }
 
 
-  // Endpoint to get the evaluated number from messages
+
   // Endpoint to get the evaluated number from messages
 app.get('/api/count', async (req, res) => {
   try {

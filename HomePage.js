@@ -61,11 +61,12 @@ const HomePage = () => {
     setError(null); // Reset error state before making a new request
     startRotation();
     try {
-      const response = await fetch('http://10.0.2.2:3000/api/count');
+      const response = await fetch('http://192.168.0.208:3000/api/count');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
+      setLitFiresCount(data.count);
 
 
       if (data.mostSevereArticleContent) {
